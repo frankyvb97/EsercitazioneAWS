@@ -11,27 +11,57 @@ Globals:
     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
+  CounterFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello-world/
+      CodeUri: counter/
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
       - x86_64
       Events:
-        HelloWorld:
+        Counter:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /counter
+            Method: post
 
-
-  ShowCounter:
+  StartLambda:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: ShowCounter
+      QueueName: StartLambda
+      RedrivePolicy:
+        deadLetterTargetArn : !GetAtt StartLambdaDlq.Arn
+        maxReceiveCount: 3
 
+  StartLambdaDlq:
+    Type: AWS::SQS::Queue
+
+#controllare role
+  # SQSRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #       - Effect: Allow
+  #         Principal:
+  #           Service:
+  #           - sqs.amazonaws.com
+  #         Action:
+  #         - SQS:SendMessage
+  #         - SQS:ReceiveMessage
+  #         - SQS:DeleteMessage
+  #         - SQS:GetQueueUrl
+  #     Path: "/"
+
+  # RootInstanceProfile:
+  #   Type: AWS::IAM::InstanceProfile
+  #   Properties:
+  #     Path: "/"
+  #     Roles:
+  #     - Ref: SQSRole
+#fine parte da controllare
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
@@ -40,22 +70,27 @@ Resources:
         Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
       ResourceQuery:
         Type: CLOUDFORMATION_STACK_1_0
+
   ApplicationInsightsMonitoring:
     Type: AWS::ApplicationInsights::Application
     Properties:
       ResourceGroupName:
         Ref: ApplicationResourceGroup
       AutoConfigurationEnabled: 'true'
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: Hello World Lambda Function ARN
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+
+  CounterApi:
+    Description: API Gateway endpoint URL for Prod stage for Counter function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/counter/"
+
+  CounterFunction:
+    Description: Counter Lambda Function ARN
+    Value: !GetAtt CounterFunction.Arn
+  
+  CounterFunctionIamRole:
+    Description: Implicit IAM Role created for Counter function
+    Value: !GetAtt CounterFunctionRole.Arn

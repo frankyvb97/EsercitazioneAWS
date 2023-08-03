@@ -1,4 +1,4 @@
-# Prova
+# Esercizio03
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
@@ -56,7 +56,7 @@ You can find your API Gateway Endpoint URL in the output values displayed after 
 Build your application with the `sam build` command.
 
 ```bash
-Prova$ sam build
+Esercizio03$ sam build
 ```
 
 The SAM CLI installs dependencies defined in `hello-world/package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
@@ -66,14 +66,14 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-Prova$ sam local invoke HelloWorldFunction --event events/event.json
+Esercizio03$ sam local invoke HelloWorldFunction --event events/event.json
 ```
 
 The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
 
 ```bash
-Prova$ sam local start-api
-Prova$ curl http://localhost:3000/
+Esercizio03$ sam local start-api
+Esercizio03$ curl http://localhost:3000/
 ```
 
 The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
@@ -97,7 +97,7 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 `NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
 
 ```bash
-Prova$ sam logs -n HelloWorldFunction --stack-name Prova --tail
+Esercizio03$ sam logs -n HelloWorldFunction --stack-name Esercizio03 --tail
 ```
 
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
@@ -107,7 +107,7 @@ You can find more information and examples about filtering Lambda function logs 
 Tests are defined in the `hello-world/tests` folder in this project. Use NPM to install the [Mocha test framework](https://mochajs.org/) and run unit tests.
 
 ```bash
-Prova$ cd hello-world
+Esercizio03$ cd hello-world
 hello-world$ npm install
 hello-world$ npm run test
 ```
@@ -117,7 +117,7 @@ hello-world$ npm run test
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
-sam delete --stack-name Prova
+sam delete --stack-name Esercizio03
 ```
 
 ## Resources

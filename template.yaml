@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Prova
+  Esercizio03
 
-  Sample SAM Template for Prova
+  Sample SAM Template for Esercizio03
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -25,6 +25,13 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+
+
+  ShowCounter:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ShowCounter
+
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group

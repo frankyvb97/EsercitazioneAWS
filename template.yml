@@ -21,20 +21,22 @@ Resources:
       - x86_64
       Events:
         Counter:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: SQS # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /counter
-            Method: post
+            Queue: !GetAtt MessageQueue.Arn
+            BatchSize: 10 # Messaggi presi per volta
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
 
-  StartLambda:
+  MessageQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: StartLambda
+      QueueName: MessageQueue
       RedrivePolicy:
-        deadLetterTargetArn : !GetAtt StartLambdaDlq.Arn
+        deadLetterTargetArn : !GetAtt MessageQueueDLQ.Arn
         maxReceiveCount: 3
 
-  StartLambdaDlq:
+  MessageQueueDLQ:
     Type: AWS::SQS::Queue
 
   SQSRole:
@@ -46,10 +48,8 @@ Resources:
         - Effect: Allow
           Principal:
             Service:
-            - sqs.amazonaws.com
-          Action:
-          - "sts:AssumeRole"
-      Path: "/"
+            - apigateway.amazonaws.com
+          Action: "sts:AssumeRole"
       Policies:
       - PolicyName: SQSPolicy
         PolicyDocument:
@@ -57,41 +57,27 @@ Resources:
           Statement:
           - Effect: Allow
             Action:
-            - SQS:SendMessage
-            - SQS:ReceiveMessage
-            - SQS:DeleteMessage
-            - SQS:GetQueueUrl
-            Resource:
-            - !GetAtt StartLambdaDlq.Arn
+              - sqs:SendMessage
+            Resource: !GetAtt CounterFunction.Arn
 
-  ApplicationResourceGroup:
-    Type: AWS::ResourceGroups::Group
+  SendMessageAPI:
+    Type: AWS::Serverless::Api #open api 3.0.1
     Properties:
-      Name:
-        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
-      ResourceQuery:
-        Type: CLOUDFORMATION_STACK_1_0
+      StageName: dev
 
-  ApplicationInsightsMonitoring:
-    Type: AWS::ApplicationInsights::Application
-    Properties:
-      ResourceGroupName:
-        Ref: ApplicationResourceGroup
-      AutoConfigurationEnabled: 'true'
+# Outputs:
+#   ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+#   Find out more about other implicit resources you can reference within SAM
+#   https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
 
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+#   CounterApi:
+#     Description: API Gateway endpoint URL for Prod stage for Counter function
+#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/counter/"
 
-  CounterApi:
-    Description: API Gateway endpoint URL for Prod stage for Counter function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/counter/"
-
-  CounterFunction:
-    Description: Counter Lambda Function ARN
-    Value: !GetAtt CounterFunction.Arn
+#   CounterFunction:
+#     Description: Counter Lambda Function ARN
+#     Value: !GetAtt CounterFunction.Arn
   
-  CounterFunctionIamRole:
-    Description: Implicit IAM Role created for Counter function
-    Value: !GetAtt CounterFunctionRole.Arn
+#   CounterFunctionIamRole:
+#     Description: Implicit IAM Role created for Counter function
+#     Value: !GetAtt CounterFunctionRole.Arn

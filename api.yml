@@ -7,7 +7,7 @@ paths:
       #aggiungere request
       responses:
         '200':
-          description: Success response
+          description: Messaggio inviato con successo
        x-amazon-apigateway-integration:
           type: "aws"
           integrationHttpMethod: POST

@@ -12,21 +12,21 @@ Globals:
 
 Resources:
   SendMessageFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: src/ #consigliato
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
       - x86_64
       Events:
         SendMessage:
-          Type: SQS # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: SQS
           Properties:
             Queue: !GetAtt MessageQueue.Arn
             BatchSize: 10 # Messaggi presi per volta
             FunctionResponseTypes:
-              - ReportBatchItemFailures
+              - ReportBatchItemFailures #ritorna solo i messaggi non corretti invece di tutta la batch
 
   MessageQueue:
     Type: AWS::SQS::Queue
@@ -57,34 +57,17 @@ Resources:
           Statement:
           - Effect: Allow
             Action:
-              - sqs:SendMessage
+              - sqs:SendMessage #è necessaria solo questa azione (meno permessi si danno, meglio è)
             Resource: !GetAtt SendMessageFunction.Arn
 
   SendMessageAPI:
-    Type: AWS::Serverless::Api #open api 3.0.1
+    Type: AWS::Serverless::Api #utilizzare openapi 3.0.1
     Properties:
       StageName: dev
       OpenApiVersion: '3.0.1'
       Name: "SendMessageAPI"
       DefinitionBody:
         Fn::Transform:
-          Name: AWS::Include
+          Name: AWS::Include #necessario per utilizzare un file YAML esterno
           Parameters:
             Location: ./api.yml
-
-# Outputs:
-#   ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-#   Find out more about other implicit resources you can reference within SAM
-#   https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-
-#   SendMessageApi:
-#     Description: API Gateway endpoint URL for Prod stage for SendMessage function
-#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/SendMessage/"
-
-#   SendMessageFunction:
-#     Description: SendMessage Lambda Function ARN
-#     Value: !GetAtt SendMessageFunction.Arn
-  
-#   SendMessageFunctionIamRole:
-#     Description: Implicit IAM Role created for SendMessage function
-#     Value: !GetAtt SendMessageFunctionRole.Arn

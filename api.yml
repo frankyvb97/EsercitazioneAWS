@@ -1,0 +1,16 @@
+openapi: "3.0.1"
+info:
+  title: SendMessageAPI
+paths:
+  /myresource:
+    post:
+      #aggiungere request
+      responses:
+        '200':
+          description: Success response
+       x-amazon-apigateway-integration:
+          type: "aws"
+          integrationHttpMethod: POST
+          uri: !Sub
+            - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
+            - QueueName: !GetAtt MyQueue.QueueName

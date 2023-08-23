@@ -66,6 +66,11 @@ Resources:
       StageName: dev
       OpenApiVersion: "3.0.1"
       Name: "SendMessageAPI"
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./api.yml
 
 # Outputs:
 #   ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

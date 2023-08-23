@@ -4,13 +4,26 @@ info:
 paths:
   /messages:
     post:
-      #aggiungere request
       responses:
         '200':
           description: Messaggio inviato con successo
-       x-amazon-apigateway-integration:
-          type: "aws"
-          integrationHttpMethod: POST
-          uri: !Sub
-            - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
-            - QueueName: !GetAtt MessageQueue.QueueName
+        '404':
+          description: Messaggio non trovato
+        default: Errore generico
+      x-amazon-apigateway-integration:
+        type: "aws"
+        integrationHttpMethod: POST
+        uri: !Sub
+          - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
+          - QueueName: !GetAtt MessageQueue.QueueName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+                properties:
+                  val1:
+                    type: integer
+                  val2:
+                    type: integer
+      #completare request

@@ -11,16 +11,16 @@ Globals:
     Timeout: 3
 
 Resources:
-  CounterFunction:
+  SendMessageFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: counter/
+      CodeUri: src/
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
       - x86_64
       Events:
-        Counter:
+        SendMessage:
           Type: SQS # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Queue: !GetAtt MessageQueue.Arn
@@ -58,26 +58,28 @@ Resources:
           - Effect: Allow
             Action:
               - sqs:SendMessage
-            Resource: !GetAtt CounterFunction.Arn
+            Resource: !GetAtt SendMessageFunction.Arn
 
   SendMessageAPI:
     Type: AWS::Serverless::Api #open api 3.0.1
     Properties:
       StageName: dev
+      OpenApiVersion: "3.0.1"
+      Name: "SendMessageAPI"
 
 # Outputs:
 #   ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
 #   Find out more about other implicit resources you can reference within SAM
 #   https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
 
-#   CounterApi:
-#     Description: API Gateway endpoint URL for Prod stage for Counter function
-#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/counter/"
+#   SendMessageApi:
+#     Description: API Gateway endpoint URL for Prod stage for SendMessage function
+#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/SendMessage/"
 
-#   CounterFunction:
-#     Description: Counter Lambda Function ARN
-#     Value: !GetAtt CounterFunction.Arn
+#   SendMessageFunction:
+#     Description: SendMessage Lambda Function ARN
+#     Value: !GetAtt SendMessageFunction.Arn
   
-#   CounterFunctionIamRole:
-#     Description: Implicit IAM Role created for Counter function
-#     Value: !GetAtt CounterFunctionRole.Arn
+#   SendMessageFunctionIamRole:
+#     Description: Implicit IAM Role created for SendMessage function
+#     Value: !GetAtt SendMessageFunctionRole.Arn

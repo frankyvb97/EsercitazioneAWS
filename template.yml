@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Esercizio03
 
-  Sample SAM Template for Esercizio03
+  SQS-DLQ con integrazione diretta tramite api gateway
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -64,7 +64,7 @@ Resources:
     Type: AWS::Serverless::Api #open api 3.0.1
     Properties:
       StageName: dev
-      OpenApiVersion: "3.0.1"
+      OpenApiVersion: '3.0.1'
       Name: "SendMessageAPI"
       DefinitionBody:
         Fn::Transform:

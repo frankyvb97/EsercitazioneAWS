@@ -1,8 +1,8 @@
-openapi: "3.0.1"
+openapi: 3.0.1
 info:
   title: SendMessageAPI
 paths:
-  /myresource:
+  /messages:
     post:
       #aggiungere request
       responses:
@@ -13,4 +13,4 @@ paths:
           integrationHttpMethod: POST
           uri: !Sub
             - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
-            - QueueName: !GetAtt MyQueue.QueueName
+            - QueueName: !GetAtt MessageQueue.QueueName

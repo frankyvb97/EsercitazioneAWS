@@ -5,7 +5,6 @@ Description: >
 
   SQS-DLQ con integrazione diretta tramite api gateway
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
@@ -70,4 +69,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include #necessario per utilizzare un file YAML esterno
           Parameters:
-            Location: ./api.yml
+            Location: api.yml
+
+
+#rivedere dopo aver finito api.yml

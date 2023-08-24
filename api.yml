@@ -1,9 +1,11 @@
 openapi: 3.0.1
 info:
   title: SendMessageAPI
+  version: 1.0
 paths:
   /messages:
     post:
+      summary: Invia un messaggio alla coda
       responses:
         '200':
           description: Messaggio inviato con successo
@@ -12,18 +14,23 @@ paths:
         default: Errore generico
       x-amazon-apigateway-integration:
         type: "aws"
-        integrationHttpMethod: POST
-        uri: !Sub
+        httpMethod: POST
+        uri: !Sub #cambiare funzione (togliere ! e usare Fn)
           - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
-          - QueueName: !GetAtt MessageQueue.QueueName
+          - QueueName: !GetAtt MessageQueue.QueueName #cambiare funzione (togliere ! e usare Fn)
+          #aggiungere credenziali (SQSRole?)
+        passthroughBehavior: WHEN_NO_MATCH
+        requestParameters:
+          #integration
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}" #modificare la richiesta
       requestBody:
         content:
           application/json:
             schema:
               type: object
-                properties:
-                  val1:
-                    type: integer
-                  val2:
-                    type: integer
-      #completare request
+              properties:
+                val1:
+                  type: integer
+                val2:
+                  type: integer

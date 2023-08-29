@@ -1,5 +1,6 @@
 export const handler = async (event) => {
     const savedEvents = event.Records;
+    console.log(savedEvents);
     const listEvents = savedEvents.map(savedEvent => sum(savedEvent));
     const result = await Promise.allSettled(listEvents);
     const batchItemFailures = result.filter(

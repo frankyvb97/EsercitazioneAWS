@@ -12,6 +12,12 @@ paths:
         '404':
           description: Messaggio non trovato
         default: Errore generico
+      requestBody: 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendMessageSchema'
       x-amazon-apigateway-integration:
         type: "aws"
         httpMethod: POST

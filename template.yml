@@ -57,7 +57,7 @@ Resources:
           - Effect: Allow
             Action:
               - sqs:SendMessage #è necessaria solo questa azione (meno permessi si danno, meglio è)
-            Resource: !GetAtt SendMessageFunction.Arn
+            Resource: !GetAtt MessageQueue.Arn
 
   SendMessageAPI:
     Type: AWS::Serverless::Api #utilizzare openapi 3.0.1

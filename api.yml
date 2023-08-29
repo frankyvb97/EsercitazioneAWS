@@ -1,0 +1,36 @@
+openapi: 3.0.1
+info:
+  title: SendMessageAPI
+  version: 1.0
+paths:
+  /messages:
+    post:
+      summary: Invia un messaggio alla coda
+      responses:
+        '200':
+          description: Messaggio inviato con successo
+        '404':
+          description: Messaggio non trovato
+        default: Errore generico
+      x-amazon-apigateway-integration:
+        type: "aws"
+        httpMethod: POST
+        uri: !Sub #cambiare funzione (togliere ! e usare Fn)
+          - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
+          - QueueName: !GetAtt MessageQueue.QueueName #cambiare funzione (togliere ! e usare Fn)
+        credentials: { 'Fn::GetAtt': [SQSRole, Arn] } #controllare credenziali
+        passthroughBehavior: WHEN_NO_MATCH
+        requestParameters:
+          #integration
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}" #modificare la richiesta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                val1:
+                  type: integer
+                val2:
+                  type: integer

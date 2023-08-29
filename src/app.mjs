@@ -12,9 +12,12 @@ export const lambdaHandler = async (event) => {
     }
 };
 
-// const sum = num1 + num2;
-// if(sum % 2 == 0) {
-//     return 0;
-// } else {
-//     return -1;
-// }
+async function sum(number) {
+    const numbers = JSON.parse(number.body);
+    const result = numbers.num1 + numbers.num2;
+    if (result % 2 == 0) {
+        return result;
+    } else {
+        throw number.messageId;
+    }
+}

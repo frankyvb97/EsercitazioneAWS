@@ -21,6 +21,9 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws"
         httpMethod: POST
+        responses:
+          default:
+            statusCode: 200
         uri: 
           Fn::Sub:
             - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
@@ -31,12 +34,12 @@ paths:
           integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
         requestTemplates:
           application/json: Action=SendMessage&MessageBody=$util.escapeJavaScript($input.body).replaceAll("\\","")
-    components:
-      schemas:
-        sendMessageSchema:
-          type: object
-          properties:
-            val1:
-              type: integer
-            val2:
-              type: integer
+components:
+  schemas:
+    sendMessageSchema:
+      type: object
+      properties:
+        val1:
+          type: number
+        val2:
+          type: number

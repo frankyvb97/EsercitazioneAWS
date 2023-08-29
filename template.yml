@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Esercizio03
+
+  SQS-DLQ con integrazione diretta tramite api gateway
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  SendMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/ #consigliato perché più generico
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Events:
+        SendMessage:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MessageQueue.Arn
+            BatchSize: 10 # Messaggi presi per volta
+            FunctionResponseTypes:
+              - ReportBatchItemFailures #ritorna solo i messaggi non corretti invece di tutta la batch
+
+  MessageQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: MessageQueue
+      RedrivePolicy:
+        deadLetterTargetArn : !GetAtt MessageQueueDLQ.Arn
+        maxReceiveCount: 3
+
+  MessageQueueDLQ:
+    Type: AWS::SQS::Queue
+
+  SQSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - apigateway.amazonaws.com
+          Action: "sts:AssumeRole"
+      Policies:
+      - PolicyName: SQSPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+              - sqs:SendMessage #è necessaria solo questa azione (meno permessi si danno, meglio è)
+            Resource: !GetAtt SendMessageFunction.Arn
+
+  SendMessageAPI:
+    Type: AWS::Serverless::Api #utilizzare openapi 3.0.1
+    Properties:
+      StageName: dev
+      Name: SendMessageAPI
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include #necessario per utilizzare un file YAML esterno
+          Parameters:
+            Location: api.yml

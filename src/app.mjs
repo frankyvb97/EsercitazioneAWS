@@ -1,20 +1,17 @@
-export const lambdaHandler = async (event) => {
-    try {
-        return {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-            })
-        }
-    } catch (err) {
-        console.log(err);
-        return err;
-    }
+export const handler = async (event) => {
+    const savedEvents = event.Records;
+    const listEvents = savedEvents.map(savedEvent => sum(savedEvent));
+    const result = await Promise.allSettled(listEvents);
+    const batchItemFailures = result.filter(
+        (item) => item.status === 'rejected').map(
+            item => ({ itemIdentifier: item.reason }))
+    console.log(batchItemFailures);
+    return { batchItemFailures };
 };
 
 async function sum(number) {
     const numbers = JSON.parse(number.body);
-    const result = numbers.num1 + numbers.num2;
+    const result = numbers.val1 + numbers.val2;
     if (result % 2 == 0) {
         return result;
     } else {

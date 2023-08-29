@@ -16,6 +16,6 @@ async function sum(number) {
     if (result % 2 == 0) {
         return result;
     } else {
-        throw number.messageId;
+        throw new Error(record.MessageId);
     }
 }

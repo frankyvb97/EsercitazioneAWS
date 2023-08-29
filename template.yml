@@ -13,7 +13,7 @@ Resources:
   SendMessageFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/ #consigliato
+      CodeUri: src/ #consigliato perché più generico
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
@@ -63,8 +63,7 @@ Resources:
     Type: AWS::Serverless::Api #utilizzare openapi 3.0.1
     Properties:
       StageName: dev
-      OpenApiVersion: '3.0.1'
-      Name: "SendMessageAPI"
+      Name: SendMessageAPI
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include #necessario per utilizzare un file YAML esterno

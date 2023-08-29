@@ -18,7 +18,7 @@ paths:
         uri: !Sub #cambiare funzione (togliere ! e usare Fn)
           - "arn:aws:apigateway:${AWS::Region}:sqs:path/${AWS::AccountId}/${QueueName}"
           - QueueName: !GetAtt MessageQueue.QueueName #cambiare funzione (togliere ! e usare Fn)
-          #aggiungere credenziali (SQSRole?)
+        credentials: { 'Fn::GetAtt': [SQSRole, Arn] } #controllare credenziali
         passthroughBehavior: WHEN_NO_MATCH
         requestParameters:
           #integration

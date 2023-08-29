@@ -69,6 +69,3 @@ Resources:
           Name: AWS::Include #necessario per utilizzare un file YAML esterno
           Parameters:
             Location: api.yml
-
-
-#rivedere dopo aver finito api.yml

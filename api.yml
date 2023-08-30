@@ -2,6 +2,10 @@ openapi: 3.0.1
 info:
   title: SendMessageAPI
   version: 1.0
+x-amazon-apigateway-request-validators:
+  RequestModelPayload:
+    validateRequestParameters: true
+    validateRequestBody: true
 paths:
   /messages:
     post:
@@ -12,6 +16,7 @@ paths:
         '404':
           description: Messaggio non trovato
         default: Errore generico
+      x-amazon-apigateway-request-validator: "RequestModelPayload"
       requestBody: 
         required: true
         content:
@@ -33,13 +38,17 @@ paths:
         requestParameters:
           integration.request.header.Content-Type: "'application/x-www-form-urlencoded'"
         requestTemplates:
-          application/json: Action=SendMessage&MessageBody=$util.escapeJavaScript($input.body).replaceAll("\\"",""")
+          application/json: Action=SendMessage&MessageBody=$util.escapeJavaScript($input.body).replaceAll('\\"','"').replaceAll('\\r','').replaceAll('\\n','')
 components:
   schemas:
     sendMessageSchema:
       type: object
+      required: 
+        - val1
+        - val2
       properties:
         val1:
           type: number
         val2:
           type: number
+      additionalProperties: false

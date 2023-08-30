@@ -5,7 +5,7 @@ export const handler = async (event) => {
     const result = await Promise.allSettled(listEvents);
     const batchItemFailures = result.filter(
         (item) => item.status === 'rejected').map(
-            item => ({ itemIdentifier: item.reason }))
+            item => ({ itemIdentifier: item.reason.message }))
     console.log(batchItemFailures);
     return { batchItemFailures };
 };
@@ -16,6 +16,6 @@ async function sum(number) {
     if (result % 2 == 0) {
         return result;
     } else {
-        throw new Error(record.MessageId);
+        throw new Error(number.messageId);
     }
 }

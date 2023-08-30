@@ -37,9 +37,6 @@ paths:
 components:
   schemas:
     sendMessageSchema:
-      required:
-        -  val1
-        -  val2
       type: object
       properties:
         val1:
